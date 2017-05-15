@@ -1,12 +1,17 @@
 <template>
   <section class="container account-container">
-    <h1 class="title is-1 has-text-centered">Place Holder for the Accounts page</h1>
+    <show-all-users/>
   </section>
 </template>
 
 <script>
+import ShowAllUsers from '@/components/dev/ShowAllUsers.vue'
+
 export default {
-  name: 'Account',
+  name: 'Home',
+  components: {
+    'show-all-users': ShowAllUsers
+  },
   data () {
     return {
       msg: ''

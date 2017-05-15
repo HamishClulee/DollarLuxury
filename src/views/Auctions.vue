@@ -11,11 +11,6 @@ export default {
   name: 'Auctions',
   components: {
     'auction-list': AuctionList
-  },
-  data () {
-    return {
-      messageDate: ''
-    }
   }
 }
 </script>

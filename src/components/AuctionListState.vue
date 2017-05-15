@@ -2,7 +2,7 @@
 <!-- 'name', 'shortDescription', 'dateCreated', 'additionalInformationLink', 'reserveTotal', 'currentTotal' -->
   <div class="container is-fullwidth">
     <div class="box">
-      <h1 class="has-text-centered title is-6 auction-list-heading">Current Auctions</h1>
+      <h1 class="has-text-centered title is-6 auction-list-heading">Current Auctions STATE</h1>
       <div class="conatiner is-fullwidth">
         <div class="columns is-multiline">
           <div class="column is-one-third"  v-for='auction in auctions' v-model='auctions' v-if='auction.status == 1'>
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="box">
-      <h1 class="has-text-centered title is-6 auction-list-heading">Upcoming Auctions</h1>
+      <h1 class="has-text-centered title is-6 auction-list-heading">Upcoming Auctions STATE</h1>
       <div class="conatiner is-fullwidth">
         <div class="columns is-multiline">
           <div class="column is-one-third"  v-for='auction in auctions' v-model='auctions' v-if='auction.status == 2'>
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="box">
-      <h1 class="has-text-centered title is-6 auction-list-heading">Past Auctions</h1>
+      <h1 class="has-text-centered title is-6 auction-list-heading">Past Auctions STATE</h1>
       <div class="conatiner is-fullwidth">
         <div class="columns is-multiline">
           <div class="column is-one-third"  v-for='auction in auctions' v-model='auctions' v-if='auction.status == 3'>
@@ -37,30 +37,16 @@
 
 <script>
 import Auction from '@/components/content/Auction.vue'
-import axios from 'axios'
+import store from '@/store'
 
 export default {
-  name: 'AuctionList',
-  components: {'auction': Auction},
+  name: 'AuctionListState',
   data () {
-    return {
-      auctions: []
-    }
+  	return {
+  		auctions: []
+  	}
   },
-  methods: {
-    loadData () {
-      console.log(this.auctions)
-      axios.get('http://localhost:8080/auctions').then(response => this.auctions = response.data).catch(function (error) {
-        console.log(error);
-      })
-    }
-  },
-  mounted () {
-    this.loadData()
-    setInterval(function () {
-      this.loadData()
-    }.bind(this), 300000) 
-  }
+  components: {'auction': Auction}
 }
 
 </script>

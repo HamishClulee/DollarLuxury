@@ -1,12 +1,8 @@
 <template>
   <section class="container home-container">
     <moment-testing/>
-    <div v-for="auction in auctions">
-      <h1>{{ auction.name }}</h1>
-    </div>
-
-
-
+    <register/>
+    <login/>
   </section>
 </template>
 
@@ -15,23 +11,19 @@
 import AuctionList from '@/components/content/AuctionList.vue'
 import axios from 'axios'
 import MomentTesting from '@/components/MomentTesting.vue'
+import Register from '@/components/Register.vue'
+import Login from '@/components/Login.vue'
 
 export default {
   name: 'Home',
   components: {
-    'auction-list': AuctionList,
-    'moment-testing': MomentTesting
+    'moment-testing': MomentTesting,
+    'register': Register,
+    'login': Login
   },
   data () {
     return {
-      msg: 'hello',
-      auctions: []
     }
-  },
-  mounted () {
-    axios.get('http://localhost:8080/auctions').then(response => this.auctions = response.data).catch(function (error) {
-      console.log(error);
-    })
   }
 }
 </script>

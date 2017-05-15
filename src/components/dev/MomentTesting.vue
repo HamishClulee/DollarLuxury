@@ -1,7 +1,9 @@
 <template>
-  <section class="box has-text-centered">
-    <h1 class="title is-6 is-info">The time is: {{ formattedDate }}</h1>
-  </section>
+
+<div>
+  <h1 class="title is-6 is-info">The time is: {{ formattedDate }}</h1>
+</div>
+
 </template>
 
 
@@ -16,7 +18,6 @@ export default {
     }
   },
   mounted () {
-    console.log('The time is ' + moment().format("HH:mm"))
     this.formattedDate = moment().format("HH:mm")
   }
 }
