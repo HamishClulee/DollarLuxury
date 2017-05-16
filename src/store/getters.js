@@ -1,1 +1,0 @@
-export const auctions = state => state.auctions

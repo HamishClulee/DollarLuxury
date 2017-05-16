@@ -6,13 +6,13 @@
             <div class="field login-form">
               <label class="label">Email</label>
               <p class="control has-icons-left has-icons-right">
-                <input class="input is-primary" type="text" placeholder="Email">
+                <input class="input is-primary" type="text" placeholder="Email" v-model="email">
               </p>
             </div>
             <div class="field login-form">
               <label class="label">Password</label>
               <p class="control has-icons-left has-icons-right">
-                <input class="input is-primary" type="password" placeholder="Password">
+                <input class="input is-primary" type="password" placeholder="Password" v-model="password">
               </p>
             </div>
             <div class="field login-form">
@@ -25,7 +25,7 @@
             </div>
             <div class="field is-grouped login-form">
               <p class="control">
-                <button class="button is-primary">Submit</button>
+                <button class="button is-primary" @click="login">Submit</button>
               </p>
             </div>
           </div>
@@ -36,11 +36,22 @@
 
 
 <script>
+import store from '@/store'
+
 export default {
   name: 'LoginModal',
   data () {
     return {
-      msg: ''
+      email: '',
+      password: ''
+    }
+  },
+  methods: {
+    login (){
+      this.$store.dispatch("login", {
+          email: this.email,
+          password: this.password
+      })
     }
   }
 }
