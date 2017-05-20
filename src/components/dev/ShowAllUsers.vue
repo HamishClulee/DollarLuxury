@@ -1,5 +1,6 @@
 <template>
 <div class="columns is-multiline">
+  <button class="button is-warning" @click="loadData">Load All Users</button>
 	<div class="card column is-one-third" v-for="user in users">
 	  <div class="card-image">
 	    <figure class="image is-4by3">
@@ -28,7 +29,7 @@
 
 <script>
 import moment from 'moment'
-import axios from 'axios'
+import {HTTP} from '@/axios';
 
 export default {
   name: 'ShowAllUsers',
@@ -39,21 +40,23 @@ export default {
   },
   methods: {
     loadData () {
-      axios.get('http://localhost:8080/users').then(response => this.users = response.data).catch(function (error) {
+      HTTP.get('api/users').then(response => this.users = response.data).catch(function (error) {
         console.log("Users axios errors: " + error);
       })
     },
     formatDate (d) {
       return moment(d).format("DD MMM YYYY HH:mm a")
     }
-  },
-  mounted () {
-    this.loadData()
-    setInterval(function () {
-      this.loadData()
-    }.bind(this), 3000000) 
   }
 }
+
+//for polling add
+// mounted () {
+//     this.loadData()
+//     setInterval(function () {
+//       this.loadData()
+//     }.bind(this), 3000000) 
+// }
 
 </script>
 

@@ -1,6 +1,8 @@
 <template>
 <!-- 'name', 'shortDescription', 'dateCreated', 'additionalInformationLink', 'reserveTotal', 'currentTotal' -->
   <div class="container is-fullwidth">
+    <button class="button is-info is-fullwidth" @click="loadData">Load All Auctions</button>
+    <button class="button is-warning is-fullwidth" @click="clearData">Clear All Auctions</button>
     <div class="box">
       <h1 class="has-text-centered title is-6 auction-list-heading">Current Auctions</h1>
       <div class="conatiner is-fullwidth">
@@ -37,7 +39,7 @@
 
 <script>
 import Auction from '@/components/content/Auction.vue'
-import axios from 'axios'
+import {HTTP} from '@/axios';
 
 export default {
   name: 'AuctionList',
@@ -50,18 +52,24 @@ export default {
   methods: {
     loadData () {
       console.log(this.auctions)
-      axios.get('http://localhost:8080/auctions').then(response => this.auctions = response.data).catch(function (error) {
+      HTTP.get('auctions').then(response => this.auctions = response.data).catch(function (error) {
         console.log(error);
       })
+    },
+    clearData () {
+      console.log(this.auctions)
+      this.auctions = []
     }
-  },
-  mounted () {
-    this.loadData()
-    setInterval(function () {
-      this.loadData()
-    }.bind(this), 300000) 
   }
 }
+
+// for polling
+// mounted () {
+//     this.loadData()
+//     setInterval(function () {
+//       this.loadData()
+//     }.bind(this), 300000) 
+//   }
 
 </script>
 

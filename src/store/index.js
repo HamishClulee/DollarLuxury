@@ -1,8 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
+import {HTTP} from '@/axios';
 
 Vue.use(Vuex)
+
+
+console.log("store - index.js")
 
 const LOGIN = "LOGIN"
 const LOGIN_SUCCESS = "LOGIN_SUCCESS"
@@ -53,16 +56,15 @@ const mutations = {
 const actions = {
 	login({ commit }, creds) {
      commit(LOGIN); // show spinner
-     return axios.post(
-            'http://localhost:8080/login',
+     return HTTP.post(
+            'login',
             {
                 email: creds.email,
                 password: creds.password
             }
         ).then(response => {
             localStorage.setItem('id_token', response.data.token)
-            console.log("Logged from auth.js: signin(): value of response.data.token: " + response.data.token + " , val: response.data.role: " + response.data.role)
-            axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('id_token')
+            console.log("value of response.data.token: " + response.data.token + " , val: response.data.role: " + response.data.role)
             var u = {
             	email: creds.email,
             	role: response.data.role

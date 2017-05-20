@@ -52,6 +52,9 @@ export default {
   name: 'TopNav',
   components: {
     'log-in-sign-up': LogInSignUp
+  },
+  mounted: () => {
+    console.log("app.vue")
   }
 }
 </script>

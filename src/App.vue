@@ -22,8 +22,10 @@ export default {
       pagetitle: 'Welcome',
       pagesubtitle: 'TEST'
     }
+  },
+  mounted: () => {
+    console.log("app.vue")
   }
-
 }
 </script>
 

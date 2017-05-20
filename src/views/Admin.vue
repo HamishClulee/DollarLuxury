@@ -1,22 +1,16 @@
 <template>
-  <section class="container home-container">
-    <moment-testing/>
-    <login/>
-  </section>
+  <section class="container home-container">Place Holder for admin</section>
 </template>
 
 
 <script>
-import AuctionList from '@/components/content/AuctionList.vue'
 import axios from 'axios'
 import MomentTesting from '@/components/MomentTesting.vue'
-import Login from '@/components/Login.vue'
 
 export default {
   name: 'Home',
   components: {
     'moment-testing': MomentTesting,
-    'login': Login
   },
   data () {
     return {
