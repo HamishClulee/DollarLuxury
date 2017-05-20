@@ -31,5 +31,6 @@ export default {
 <style scoped>
 .home-container {
   padding: 60px;
+  max-width: none;
 }
 </style>

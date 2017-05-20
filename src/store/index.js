@@ -4,15 +4,18 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
-const LOGIN = "LOGIN";
-const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-const LOGOUT = "LOGOUT";
+const LOGIN = "LOGIN"
+const LOGIN_SUCCESS = "LOGIN_SUCCESS"
+const LOGOUT = "LOGOUT"
+const LOGIN_ERROR = "LOGIN_ERROR"
 
 const state = {
 	counter: 0,
 	pending: false,
 	auctions: [],
-	isLoggedIn: !!localStorage.getItem('id_token'),
+  userLoggedIn: false,
+  loginError: false,
+  loginErrorMessage: '',
 	user: {
 		email: null,
 		role: null
@@ -20,7 +23,10 @@ const state = {
 }
 
 const getters = {
-	getUser: state => state.user
+	getUser: state => { return state.user },
+  isUserLoggedIn: state => { return state.userLoggedIn },
+  isLoginError: state => { return state.loginError },
+  getLoginErrorMessage: state => { return state.loginErrorMessage }
 }
 
 const mutations = {
@@ -31,10 +37,16 @@ const mutations = {
       state.pending = false
       state.user.role = user.role
       state.user.email = user.email
+      state.userLoggedIn = true
     },
-    [LOGOUT](state) {
+    [LOGOUT] (state) {
       state.user.role = null
       state.user.email = null
+      state.userLoggedIn = false
+    },
+    [LOGIN_ERROR] (state, message) {
+      state.loginError = true
+      state.loginErrorMessage = message
     }
 }
 
@@ -56,6 +68,8 @@ const actions = {
             	role: response.data.role
             }
             commit(LOGIN_SUCCESS, u)
+        }).catch(function (e) {
+            commit(LOGIN_ERROR, e.response.data.message)
         })
    },
    logout({ commit }) {

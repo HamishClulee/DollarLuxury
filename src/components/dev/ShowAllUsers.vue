@@ -16,7 +16,7 @@
 
 	    <div class="content">
 	      <small>{{ formatDate(user.dateCreated) }}</small>
-	      <p><small>UserName: {{ user.username }}</small></p>
+	      <p><small>UserName: {{ user.email }}</small></p>
 	      <p><small>Password: {{ user.password }}</small></p>
 	    </div>
       </div>
@@ -51,7 +51,7 @@ export default {
     this.loadData()
     setInterval(function () {
       this.loadData()
-    }.bind(this), 300000) 
+    }.bind(this), 3000000) 
   }
 }
 
