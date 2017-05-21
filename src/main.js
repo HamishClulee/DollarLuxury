@@ -8,7 +8,6 @@ import store from './store'
 console.log("main.js")
 
 Vue.config.productionTip = false
-localStorage.clear()
 
 /* eslint-disable no-new */
 new Vue({

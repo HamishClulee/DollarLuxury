@@ -1,6 +1,7 @@
 <template>
 <div class="columns is-multiline">
   <button class="button is-warning" @click="loadData">Load All Users</button>
+  <button class="button is-danger" @click="clearData">Clear All Users</button>
 	<div class="card column is-one-third" v-for="user in users">
 	  <div class="card-image">
 	    <figure class="image is-4by3">
@@ -43,6 +44,9 @@ export default {
       HTTP.get('api/users').then(response => this.users = response.data).catch(function (error) {
         console.log("Users axios errors: " + error);
       })
+    },
+    clearData () {
+    	this.users = []
     },
     formatDate (d) {
       return moment(d).format("DD MMM YYYY HH:mm a")

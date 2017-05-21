@@ -8,7 +8,7 @@
       <div class="conatiner is-fullwidth">
         <div class="columns is-multiline">
           <div class="column is-one-third"  v-for='auction in auctions' v-model='auctions' v-if='auction.status == 1'>
-            <auction :name='auction.name' :shortDescription='auction.shortDescription' :dateCreated='auction.dateCreated' :additionalInformationLink='auction.additionalInformationLink' :reserveTotal='auction.reserve' :currentTotal='auction.currentAmount'></auction>
+            <auction-card :name='auction.name' :shortDescription='auction.shortDescription' :dateCreated='auction.dateCreated' :additionalInformationLink='auction.additionalInformationLink' :reserveTotal='auction.reserve' :currentTotal='auction.currentAmount' :auctionId='auction.id'></auction-card>
           </div>
         </div>
       </div>
@@ -18,7 +18,7 @@
       <div class="conatiner is-fullwidth">
         <div class="columns is-multiline">
           <div class="column is-one-third"  v-for='auction in auctions' v-model='auctions' v-if='auction.status == 2'>
-            <auction :name='auction.name' :shortDescription='auction.shortDescription' :dateCreated='auction.dateCreated' :additionalInformationLink='auction.additionalInformationLink' :reserveTotal='auction.reserve' :currentTotal='auction.currentAmount'></auction>
+            <auction-card :name='auction.name' :shortDescription='auction.shortDescription' :dateCreated='auction.dateCreated' :additionalInformationLink='auction.additionalInformationLink' :reserveTotal='auction.reserve' :currentTotal='auction.currentAmount'></auction-card>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@
       <div class="conatiner is-fullwidth">
         <div class="columns is-multiline">
           <div class="column is-one-third"  v-for='auction in auctions' v-model='auctions' v-if='auction.status == 3'>
-            <auction :name='auction.name' :shortDescription='auction.shortDescription' :dateCreated='auction.dateCreated' :additionalInformationLink='auction.additionalInformationLink' :reserveTotal='auction.reserve' :currentTotal='auction.currentAmount'></auction>
+            <auction-card :name='auction.name' :shortDescription='auction.shortDescription' :dateCreated='auction.dateCreated' :additionalInformationLink='auction.additionalInformationLink' :reserveTotal='auction.reserve' :currentTotal='auction.currentAmount'></auction-card>
           </div>
         </div>
       </div>
@@ -38,12 +38,12 @@
 
 
 <script>
-import Auction from '@/components/content/Auction.vue'
+import AuctionCard from '@/components/content/AuctionCard.vue'
 import {HTTP} from '@/axios';
 
 export default {
   name: 'AuctionList',
-  components: {'auction': Auction},
+  components: {'auction-card': AuctionCard},
   data () {
     return {
       auctions: []

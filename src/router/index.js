@@ -4,22 +4,29 @@ import Home from '@/views/Home'
 import Auctions from '@/views/Auctions'
 import Account from '@/views/Account'
 import Admin from '@/views/Admin'
+import NotFound from '@/views/NotFound.vue'
+import Auction from '@/components/content/Auction.vue'
 
 Vue.use(Router)
 
 console.log("store - index.js")
 
-function guardRoute (route, redirect, next) {
-  if (window.confirm(`Navigate to ${route.path}?`)) {
-    next()
-  } else if (window.confirm(`Redirect to /baz?`)) {
-    redirect('/baz')
-  }
-}
+// function guardRoute (route, redirect, next) {
+//   if (window.confirm(`Navigate to ${route.path}?`)) {
+//     next()
+//   } else if (window.confirm(`Redirect to /baz?`)) {
+//     redirect('/baz')
+//   }
+// }
 
 export default new Router({
   mode: 'history',
   routes: [
+    {
+      path: '*',
+      name: 'NotFound',
+      component: NotFound
+    },
     {
       path: '/',
       name: 'Home',
@@ -29,6 +36,11 @@ export default new Router({
       path: '/auctions',
       name: 'Auctions',
       component: Auctions
+    },
+    {
+      path: '/auctions/:id',
+      name: 'Auction',
+      component: Auction
     },
     {
       path: '/account',
@@ -42,12 +54,5 @@ export default new Router({
     }
   ],
   linkActiveClass: 'is-active',
-  mode: 'history',
-  beforeEach : ((route, redirect, next) => {
-    if (route.matched.some(m => m.meta.needGuard)) {
-      guardRoute(route, redirect, next)
-    } else {
-      next()
-    }
-  })
+  mode: 'history'
 })
