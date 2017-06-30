@@ -11,14 +11,6 @@ Vue.use(Router)
 
 console.log("store - index.js")
 
-// function guardRoute (route, redirect, next) {
-//   if (window.confirm(`Navigate to ${route.path}?`)) {
-//     next()
-//   } else if (window.confirm(`Redirect to /baz?`)) {
-//     redirect('/baz')
-//   }
-// }
-
 export default new Router({
   mode: 'history',
   routes: [
@@ -53,6 +45,5 @@ export default new Router({
       component: Admin
     }
   ],
-  linkActiveClass: 'is-active',
-  mode: 'history'
+  linkActiveClass: 'is-active'
 })

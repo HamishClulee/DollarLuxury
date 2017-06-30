@@ -4,7 +4,6 @@ import {HTTP} from '@/axios';
 
 Vue.use(Vuex)
 
-
 console.log("store - index.js")
 
 const LOGIN = "LOGIN"
@@ -29,14 +28,14 @@ const getters = {
 	getUser: state => { return state.user },
   isUserLoggedIn: state => { return state.userLoggedIn },
   isLoginError: state => { return state.loginError },
-  getLoginErrorMessage: state => { return state.loginErrorMessage }
+  getLoginErrorMessage: state => { return state.loginErrorMessage },
 }
 
 const mutations = {
     [LOGIN] (state) {
       state.pending = true;
     },
-    [LOGIN_SUCCESS] (state, user) {
+    [LOGIN_SUCCESS] (state, user, token) {
       state.pending = false
       state.user.role = user.role
       state.user.email = user.email
@@ -69,7 +68,7 @@ const actions = {
             	email: creds.email,
             	role: response.data.role
             }
-            commit(LOGIN_SUCCESS, u)
+            commit(LOGIN_SUCCESS, u, response.data.token)
         }).catch(function (e) {
             commit(LOGIN_ERROR, e.response.data.message)
         })
