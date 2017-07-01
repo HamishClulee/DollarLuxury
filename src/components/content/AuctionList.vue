@@ -1,9 +1,7 @@
 <template>
 <!-- 'name', 'shortDescription', 'dateCreated', 'additionalInformationLink', 'reserveTotal', 'currentTotal' -->
   <div class="container is-fullwidth">
-    <button class="button is-info is-fullwidth" @click="loadData">Load All Auctions</button>
-    <button class="button is-warning is-fullwidth" @click="clearData">Clear All Auctions</button>
-    <div class="box">
+    <div>
       <h1 class="has-text-centered title is-6 auction-list-heading">Current Auctions</h1>
       <div class="conatiner is-fullwidth">
         <div class="columns is-multiline">
@@ -34,6 +32,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 
@@ -50,16 +49,14 @@ export default {
     }
   },
   methods: {
-    loadData () {
-      console.log(this.auctions)
+    clearData () {
+      this.auctions = []
+    }
+  },
+  mounted () {
       HTTP.get('auctions').then(response => this.auctions = response.data).catch(function (error) {
         console.log(error);
       })
-    },
-    clearData () {
-      console.log(this.auctions)
-      this.auctions = []
-    }
   }
 }
 
@@ -74,6 +71,10 @@ export default {
 </script>
 
 <style scoped>
+
+.auction-page-container {
+  width: 100%;
+}
 
 .auction-list {
   margin-top: 60px;

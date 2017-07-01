@@ -3,49 +3,21 @@
     <top-nav/>
     <hero/>
     <transition name="fade" mode="out-in"><router-view></router-view></transition>
-    <footer class="footer">
-        <div class="content has-text-centered">
-          <p>
-            <span class="footer-icon">
-              <div class="nav-center icon-nav">
-                <a class="nav-item">
-                  <span class="icon">
-                    <a href="https://facebook.com" target="_blank">
-                      <i class="fa fa-facebook"></i>
-                    </a>
-                  </span>
-                </a>
-                <a class="nav-item">
-                  <span class="icon">
-                    <a href="https://twitter.com" target="_blank">
-                      <i class="fa fa-twitter"></i>
-                    </a>
-                  </span>
-                </a>
-                <a class="nav-item">
-                  <span class="icon">
-                    <a href="https://instagram.com" target="_blank">
-                      <i class="fa fa-instagram"></i>
-                    </a>
-                  </span>
-                </a>
-              </div>
-            </span>
-          </p>
-        </div>
-    </footer>
+    <site-footer></site-footer>
   </div>
 </template>
 
 <script>
 import TopNav from './components/nav/TopNav.vue'
 import Hero from './components/nav/Hero.vue'
+import SiteFooter from './components/nav/SiteFooter.vue'
 
 export default {
   name: 'app',
   components: {
     'top-nav': TopNav,
-    'hero': Hero
+    'hero': Hero,
+    'site-footer': SiteFooter
   },
   data () {
     return {
@@ -63,6 +35,7 @@ export default {
   opacity: 0
 }
 </style>
+
 <style>
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i');
 
@@ -70,26 +43,4 @@ export default {
 body, html {
   font-family: 'Open Sans', sans-serif;
 }
-
-.footer {
-  height: 28px;
-}
-
-.footer-icon {
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-}
-
-.footer-icon-item {
-  margin: 5px 20px;
-  opacity: 0.5;
-  color: #3273dc;
-}
-
-.footer-icon-item:hover {
-  opacity: 1;
-  cursor: pointer;
-}
-
 </style>

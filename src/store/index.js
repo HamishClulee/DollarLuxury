@@ -4,8 +4,6 @@ import {HTTP} from '@/axios';
 
 Vue.use(Vuex)
 
-console.log("store - index.js")
-
 const LOGIN = "LOGIN"
 const LOGIN_SUCCESS = "LOGIN_SUCCESS"
 const LOGOUT = "LOGOUT"

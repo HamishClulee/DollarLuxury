@@ -4,14 +4,9 @@
 
 
 <script>
-import axios from 'axios'
-import MomentTesting from '@/components/MomentTesting.vue'
 
 export default {
   name: 'Home',
-  components: {
-    'moment-testing': MomentTesting,
-  },
   data () {
     return {
     }
