@@ -27,20 +27,19 @@ export default {
 }
 </script>
 
-<style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .2s
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
-  opacity: 0
-}
-</style>
-
 <style>
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i');
 
 /* ----- Global CSS ------ */
 body, html {
   font-family: 'Open Sans', sans-serif;
+}
+</style>
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="top-nav-container">
     <nav class="nav drop-shadow-bottom">
       <div class="nav-left logo-nav">
         <figure class="image is-96x96">
@@ -75,6 +75,12 @@ export default {
 
 .icon-nav {
   padding-right: 25px;
+}
+
+.top-nav-container {
+  position: fixed;
+  width: 100%;
+  z-index: 100;
 }
 
 </style>

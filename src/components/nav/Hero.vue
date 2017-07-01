@@ -35,5 +35,7 @@ export default {
   box-shadow: 0 4px 10px -2px rgba(0,0,0,0.30);
 }
 
-
+.hero{
+  padding-top: 80px;
+}
 </style>

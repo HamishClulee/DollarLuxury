@@ -2,9 +2,10 @@
     <div class="columns pad">
       <div class="column is-2"><auction-side-nav></auction-side-nav></div>
       <div class="column is-10">
-        <h1 class="title is-1"> {{ auction.name }}</h1>
-        <!-- AUCTION CONTENT HERE -->
-        
+        <transition name="fade" mode="out-in">
+          <auction-user-panel v-if="isUserLoggedIn"></auction-user-panel>
+        </transition>
+          <auction-page></auction-page>
       </div>
     </div>
 		
@@ -12,27 +13,31 @@
 
 
 <script>
-import {HTTP} from '@/axios'
+import {mapGetters} from 'vuex'
 import AuctionSideNav from '@/components/content/AuctionSideNav.vue'
+import AuctionUserPanel from '@/components/content/AuctionUserPanel.vue'
+import AuctionPage from '@/components/content/AuctionPage.vue'
+
 
 export default {
   name: 'Auction',
   components: {
-    'auction-side-nav': AuctionSideNav
+    'auction-side-nav': AuctionSideNav,
+    'auction-user-panel': AuctionUserPanel,
+    'auction-page': AuctionPage
   },
   data () {
     return {
-      auction: {}
+
     }
   },
   methods: {
 
   },
-  mounted () {
-    console.log("route params id: " + this.$route.params.id)  
-		HTTP.get('auctions/' + this.$route.params.id).then(response => this.auction = response.data).catch(function (error) {
-      	console.log("get single auction axios errors: " + error);
-    })
+  computed: {
+    ...mapGetters([
+      'isUserLoggedIn'
+    ])
   }
 }
 
@@ -42,5 +47,12 @@ export default {
 .pad {
 	margin-top: 50px;
   margin-left: 50px;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
 }
 </style>
