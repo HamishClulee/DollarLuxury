@@ -1,74 +1,52 @@
 <template>
   <section>
     <div class="container">
-      <h1 class="title">{{ auction.name }}</h1>
-      <h2 class="subtitle">
-        {{ auction.longDescription }}
-      </h2>
-      <h2 class="subtitle">
-        <a :href="auction.additionalInformationLink">More info...</a>
-      </h2>
-      <h2 class="subtitle">
-        Auction created {{ dateCreated }} days ago...
-      </h2>
-      <div class="card-image">
-      <div class="columns">
-      	<div class="column is-3">
-      	  <figure class="image is-256x256">
-	        <img src="http://bulma.io/images/placeholders/256x256.png">
-	      </figure>
-      	</div>
-      	<div class="column is-3">
-      	  <figure class="image is-256x256">
-	        <img src="http://bulma.io/images/placeholders/256x256.png">
-	      </figure>
-      	</div>
-      	<div class="column is-3">
-      	  <figure class="image is-256x256">
-	        <img src="http://bulma.io/images/placeholders/256x256.png">
-	      </figure>
-      	</div>
-      	<div class="column is-3">
-      	  <figure class="image is-256x256">
-	        <img src="http://bulma.io/images/placeholders/256x256.png">
-	      </figure>
-      	</div>
-      </div>
-	  </div>
-	  <div class="box">
-	  	<h1 class="title">Auction</h1>
-	  	<a class="button is-large is-primary is-fullwidth">Start Bidding Now...</a>
-	  </div>
+      <transition name="fade" mode="out-in">
+	      <auction-info v-if="!biddingMode"><slot><a v-if="isUserLoggedIn"class="button is-large is-primary is-fullwidth" @click="startBidding">Start Bidding Now...</a><a v-if="!isUserLoggedIn"class="button is-large is-danger is-fullwidth" @click="startBidding">Login to start bidding</a></slot></auction-info>
+	      <auction-bidding v-if="biddingMode && isUserLoggedIn"></auction-bidding>
+      </transition>
     </div>
   </section>
 </template>
 
 
 <script>
-import {HTTP} from '@/axios'
-import moment from 'moment'
+import {mapGetters} from 'vuex'
+import AuctionInfo from '@/components/content/AuctionInfo.vue'
+import AuctionBidding from '@/components/content/AuctionBidding.vue'
+
 
 export default {
   name: 'AuctionPage',
+  components: {
+  	'auction-info': AuctionInfo,
+  	'auction-bidding': AuctionBidding
+  },
   data () {
     return {
-      auction: {}
+      auction: {},
+      biddingMode: false
     }
   },
-  mounted () {
-	HTTP.get('auctions/' + this.$route.params.id).then(response => this.auction = response.data).catch(function (error) {
-  		console.log("get single auction axios errors: " + error);
-	})
-  },
-  computed:{
-  	dateCreated () {
-  		return moment().diff(this.auction.dateCreated, 'days')
+  methods: {
+  	startBidding() {
+  		this.biddingMode = true
   	}
+  },
+  computed: {
+    ...mapGetters([
+      'isUserLoggedIn'
+    ])
   }
 }
 
 </script>
 
-<style>
-
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
+}
 </style>

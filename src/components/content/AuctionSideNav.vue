@@ -29,6 +29,7 @@
 	  <p class="menu-label">
 	    Please Log In to your account!
 	  </p>
+	  <a v-if="!isUserLoggedIn"class="button is-large is-danger is-fullwidth" @click="startBidding">Login to start bidding</a>
 	</aside>  
   </div>
 </template>
