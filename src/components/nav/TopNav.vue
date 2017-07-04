@@ -54,7 +54,7 @@ export default {
     'log-in-sign-up': LogInSignUp
   },
   mounted: () => {
-    console.log("app.vue")
+    
   }
 }
 </script>

@@ -5,7 +5,9 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-console.log("main.js")
+// import VueStomp from 'vue-stomp'
+
+// Vue.use(VueStomp, 'http://localhost:8080/bid')
 
 Vue.config.productionTip = false
 

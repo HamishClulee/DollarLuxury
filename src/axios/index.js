@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-console.log("axios - index.js")
+import axios from 'axios'
 
 export const HTTP = axios.create({
   baseURL: 'http://localhost:8080/'
@@ -8,9 +6,9 @@ export const HTTP = axios.create({
 
 HTTP.interceptors.request.use(function (config) {
     	config.headers['Authorization'] = "Bearer " + localStorage.getItem('id_token')
-    	return config;
+    	return config
   	}, 
   	function (error) {
     	console.log("intercepted - request - error: " + error)
-    	return Promise.reject(error);
+    	return Promise.reject(error)
 });

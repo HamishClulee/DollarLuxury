@@ -9,8 +9,6 @@ import Auction from '@/components/content/Auction.vue'
 
 Vue.use(Router)
 
-console.log("store - index.js")
-
 export default new Router({
   mode: 'history',
   routes: [
