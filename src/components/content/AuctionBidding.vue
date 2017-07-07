@@ -12,6 +12,7 @@
 import DollarSpinnerSmall from '@/components/util/DollarSpinnerSmall.vue'
 import SockJS from 'sockjs-client'
 import { mapMutations, mapGetters } from 'vuex'
+import {Utils} from '@/store/Utils.js'
 
 export default {
   name: 'AuctionBidding',
@@ -20,18 +21,20 @@ export default {
   },
   data () {
     return {
-      msg: '',
-      pending: true,
-      ready: false,
       socketConnected: false,
-      bidId: 0,
-      userEmail: this.getUserEmail
+      ClientGuidArray: [],
+      ServerGuidArray: []
     }
   },
   methods: {
     sendBid(){
-      this.stompClient.send("/app/bid", {}, JSON.stringify({'id': this.bidId, 'email': this.userEmail, 'auctionId': this.$route.params.id}))
-      this.bidId++
+      var g = Utils.guid()
+      this.ClientGuidArray.push(g)
+      this.stompClient.send("/app/bid", {}, JSON.stringify({
+          'userEmail': this.getUserEmail, 
+          'auctionId': this.$route.params.id, 
+          'id': g
+        }))
       this.BID_MADE()
     },
     ...mapMutations([
@@ -42,24 +45,24 @@ export default {
     var socket = new SockJS('http://localhost:8080/startBidding')
     this.stompClient = Stomp.over(socket)
     var that = this
-    this.stompClient.connect({}, function () {
+    var respArray = []
+    this.stompClient.connect({}, () => {
       that.socketConnected = true
-      that.stompClient.subscribe('/allBids/bidresponse', function (greeting) {
-        console.log(greeting.body)
+      that.stompClient.subscribe('/allBids/bidresponse', (response) => {
+        respArray.push(JSON.parse(response.body).status)
       })
     })
+    this.ServerGuidArray = respArray
   },
   computed: {
     ...mapGetters(['getUserEmail'])
   }
 }
-
 </script>
 
-<style>
+<style scoped>
 .bidding-container {
 	height: 80px;
 	background-color: white;
 }
-
 </style>
