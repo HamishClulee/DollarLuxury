@@ -2,8 +2,7 @@
   <div>
     <!-- <dollar-spinner-small v-if="pending"></dollar-spinner-small> -->
     <div class="bidding-container"></div>
-    <a class="button" @click="connectSocket">Connect</a>
-    <a class="button" @click="sendBid">Send Bid</a>
+    <a class="button" v-if="socketConnected" @click="sendBid">Send Bid</a>
   </div>
   </div>
 </template>
@@ -12,6 +11,7 @@
 <script>
 import DollarSpinnerSmall from '@/components/util/DollarSpinnerSmall.vue'
 import SockJS from 'sockjs-client'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'AuctionBidding',
@@ -23,33 +23,34 @@ export default {
       msg: '',
       pending: true,
       ready: false,
-      invokeIdCnt: 0,
-      socketConnected: false
+      socketConnected: false,
+      bidId: 0,
+      userEmail: this.getUserEmail
     }
   },
   methods: {
-    connectSocket() {
-      
-    },
     sendBid(){
-      this.stompClient.send("/app/bid", {}, JSON.stringify({'id': '1212121212'}));
-    }
+      this.stompClient.send("/app/bid", {}, JSON.stringify({'id': this.bidId, 'email': this.userEmail, 'auctionId': this.$route.params.id}))
+      this.bidId++
+      this.BID_MADE()
+    },
+    ...mapMutations([
+      'BID_MADE'
+    ])
   },
   mounted () {
     var socket = new SockJS('http://localhost:8080/startBidding')
-
     this.stompClient = Stomp.over(socket)
-
     var that = this
     this.stompClient.connect({}, function () {
-
-      this.socketConnected = true
-
+      that.socketConnected = true
       that.stompClient.subscribe('/allBids/bidresponse', function (greeting) {
-        console.log(JSON.parse(greeting.body).content)
+        console.log(greeting.body)
       })
-
     })
+  },
+  computed: {
+    ...mapGetters(['getUserEmail'])
   }
 }
 
@@ -57,7 +58,7 @@ export default {
 
 <style>
 .bidding-container {
-	height: 800px;
+	height: 80px;
 	background-color: white;
 }
 

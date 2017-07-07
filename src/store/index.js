@@ -8,6 +8,7 @@ const LOGIN = "LOGIN"
 const LOGIN_SUCCESS = "LOGIN_SUCCESS"
 const LOGOUT = "LOGOUT"
 const LOGIN_ERROR = "LOGIN_ERROR"
+const SET_HTTP_ERROR = "SET_HTTP_ERROR"
 
 const state = {
 	counter: 0,
@@ -18,8 +19,24 @@ const state = {
   loginErrorMessage: '',
 	user: {
 		email: null,
-		role: null
-	}
+		role: null,
+    accountBalance: 0,
+    totalBidsMade: 0
+	},
+  currentAuction: {
+    id: 0,
+    name: '',
+    shortDescription: '',
+    longDescription: '', 
+    imagePath: '',
+    additionalInformationLink: '',
+    reserve: 0,
+    currentAmount: 0,
+    status: 0,
+    dateCreated: 0
+  },
+  currentAuctionReady: false,
+  httpError: false
 }
 
 const getters = {
@@ -27,16 +44,23 @@ const getters = {
   isUserLoggedIn: state => { return state.userLoggedIn },
   isLoginError: state => { return state.loginError },
   getLoginErrorMessage: state => { return state.loginErrorMessage },
+  getHttpError: state => { return state.httpError },
+  getCurrentAuction: state => { return state.currentAuction  },
+  getAccountBalance: state => { return state.user.accountBalance.formatMoney(2) },
+  getTotalBidsMade: state => { return state.user.totalBidsMade },
+  getUserEmail: state => { return state.user.email }
 }
 
 const mutations = {
     [LOGIN] (state) {
       state.pending = true;
     },
-    [LOGIN_SUCCESS] (state, user, token) {
+    [LOGIN_SUCCESS] (state, user) {
       state.pending = false
       state.user.role = user.role
       state.user.email = user.email
+      state.user.accountBalance = user.accountBalance
+      state.user.totalBidsMade = user.totalBidsMade
       state.userLoggedIn = true
     },
     [LOGOUT] (state) {
@@ -47,6 +71,18 @@ const mutations = {
     [LOGIN_ERROR] (state, message) {
       state.loginError = true
       state.loginErrorMessage = message
+    },
+    [SET_HTTP_ERROR] (state){
+      state.httpError = true
+    },
+    SET_CURRENT_AUCTION: (state, {auctionDetails}) => {
+      state.currentAuction = auctionDetails
+      state.currentAuctionReady = true
+    },
+    BID_MADE: (state) => {
+      state.user.accountBalance--
+      state.user.totalBidsMade++
+      state.currentAuction.currentAmount++
     }
 }
 
@@ -61,12 +97,13 @@ const actions = {
             }
         ).then(response => {
             localStorage.setItem('id_token', response.data.token)
-            console.log("value of response.data.token: " + response.data.token + " , val: response.data.role: " + response.data.role)
-            var u = {
+            var user = {
             	email: creds.email,
-            	role: response.data.role
+            	role: response.data.role,
+              accountBalance: response.data.userAccountBalance,
+              totalBidsMade: response.data.totalBidsMade
             }
-            commit(LOGIN_SUCCESS, u, response.data.token)
+            commit(LOGIN_SUCCESS, user)
         }).catch(function (e) {
             commit(LOGIN_ERROR, e.response.data.message)
         })
@@ -74,6 +111,13 @@ const actions = {
    logout({ commit }) {
      localStorage.removeItem('id_token')
      commit(LOGOUT)
+   },
+   fetchCurrentAuction({ commit }, auctionId){
+      HTTP.get('auctions/' + auctionId).then((response) => {
+        commit('SET_CURRENT_AUCTION', { auctionDetails: response.data })
+      }, (err) => {
+        commit(SET_HTTP_ERROR)
+      })
    }
 }
 

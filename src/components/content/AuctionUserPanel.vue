@@ -3,25 +3,25 @@
 	  <div class="level-item has-text-centered">
 	    <div>
 	      <p class="heading">Account Balance</p>
-	      <p class="title balance">${{ accountBalance }}</p>
+	      <p class="title balance">${{ getAccountBalance }}</p>
 	    </div>
 	  </div>
 	  <div class="level-item has-text-centered">
 	    <div>
 	      <p class="heading">Current Auction Percentage</p>
-	      <p class="title percentage">{{ currentAuctionPercentage }}%</p>
+	      <p class="title percentage">{{ getPercentage }}%</p>
 	    </div>
 	  </div>
 	  <div class="level-item has-text-centered">
 	    <div>
 	      <p class="heading">Total Bids Made</p>
-	      <p class="title total-bids">{{ totalBidsMade }}</p>
+	      <p class="title total-bids">{{ getTotalBidsMade }}</p>
 	    </div>
 	  </div>
 	  <div class="level-item has-text-centered">
 	    <div>
 	      <p class="heading">Bids Until Next Unlock</p>
-	      <p class="title bids-until">{{ untilNextUnlock }}</p>
+	      <p class="title bids-until">Not Implemented yet</p>
 	    </div>
 	  </div>
 	</nav>
@@ -29,15 +29,23 @@
 
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'AuctionUserPanel',
   data () {
     return {
-      accountBalance: 40,
-      currentAuctionPercentage: 79,
-      totalBidsMade: 40,
-      untilNextUnlock: 2
+
     }
+  },
+  computed:{
+  	dateCreated () {
+  		return moment().diff(this.getCurrentAuction.dateCreated, 'days')
+  	},
+  	getPercentage() {
+  		return Math.round(((this.getCurrentAuction.currentAmount / this.getCurrentAuction.reserve ) * 100))
+  	},
+    ...mapGetters(['getCurrentAuction', 'getAccountBalance', 'getTotalBidsMade'])
   }
 }
 

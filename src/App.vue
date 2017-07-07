@@ -2,27 +2,36 @@
   <div id="app">
     <top-nav/>
     <hero/>
+    <http-error v-if="getHttpError"></http-error>
     <transition name="fade" mode="out-in"><router-view></router-view></transition>
     <site-footer></site-footer>
   </div>
 </template>
 
 <script>
-import TopNav from './components/nav/TopNav.vue'
-import Hero from './components/nav/Hero.vue'
-import SiteFooter from './components/nav/SiteFooter.vue'
+import TopNav from '@/components/nav/TopNav.vue'
+import Hero from '@/components/nav/Hero.vue'
+import SiteFooter from '@/components/nav/SiteFooter.vue'
+import HttpError from '@/components/util/HttpError.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'app',
   components: {
     'top-nav': TopNav,
     'hero': Hero,
-    'site-footer': SiteFooter
+    'site-footer': SiteFooter,
+    'http-error': HttpError
   },
   data () {
     return {
 
     }
+  },
+  computed: {
+    ...mapGetters([
+      'getHttpError'
+    ])
   }
 }
 </script>
@@ -39,7 +48,7 @@ body, html {
 .fade-enter-active, .fade-leave-active {
   transition: opacity .2s
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+.fade-enter, .fade-leave-to {
   opacity: 0
 }
 </style>

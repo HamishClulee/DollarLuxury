@@ -1,11 +1,11 @@
 <template>
   <div>
-	<h1 class="title">{{ auction.name }}</h1>
+	<h1 class="title">{{ getCurrentAuction.name }}</h1>
       <h2 class="subtitle">
-        {{ auction.longDescription }}
+        {{ getCurrentAuction.longDescription }}
       </h2>
       <h2 class="subtitle">
-        <a :href="auction.additionalInformationLink">More info...</a>
+        <a :href="getCurrentAuction.additionalInformationLink">More info...</a>
       </h2>
       <h2 class="subtitle">
         Auction created {{ dateCreated }} days ago...
@@ -42,6 +42,7 @@
 <script>
 import {HTTP} from '@/axios'
 import moment from 'moment'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'AuctionInfo',
@@ -51,14 +52,18 @@ export default {
     }
   },
   mounted () {
-	HTTP.get('auctions/' + this.$route.params.id).then(response => this.auction = response.data).catch(function (error) {
-  		console.log("get single auction axios errors: " + error);
-	})
+	   this.fetchCurrentAuction(this.$route.params.id)
   },
   computed:{
   	dateCreated () {
-  		return moment().diff(this.auction.dateCreated, 'days')
-  	}
+  		return moment().diff(this.getCurrentAuction.dateCreated, 'days')
+  	},
+    ...mapGetters(['getCurrentAuction'])
+  },
+  methods: {
+    ...mapActions([
+      'fetchCurrentAuction'
+    ])
   }
 }
 
