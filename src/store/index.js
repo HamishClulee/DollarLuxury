@@ -46,6 +46,7 @@ const getters = {
   getLoginErrorMessage: state => { return state.loginErrorMessage },
   getHttpError: state => { return state.httpError },
   getCurrentAuction: state => { return state.currentAuction  },
+  getCurrentAuctionAmount: state => { return state.currentAuction.currentAmount  },
   getAccountBalance: state => { return state.user.accountBalance.formatMoney(2) },
   getTotalBidsMade: state => { return state.user.totalBidsMade },
   getUserEmail: state => { return state.user.email }
@@ -82,7 +83,10 @@ const mutations = {
     BID_MADE: (state) => {
       state.user.accountBalance--
       state.user.totalBidsMade++
-      state.currentAuction.currentAmount++
+    },
+    BID_RESPONSE_RECIEVED: (state, currentAmount) => {
+      console.log("THE CURRENT AMOUNT FROM STORE MUTE: " + currentAmount)
+      state.currentAuction.currentAmount = currentAmount
     }
 }
 
