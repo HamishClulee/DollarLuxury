@@ -41,8 +41,6 @@ export default {
       this.BID_MADE()
     },
     messageResponse(resp){
-      // // console.log("FORM MESSAGE RESPONSE: " + JSON.parse(resp.body).currentAmount)
-      // console.log("FORM MESSAGE RESPONSE: ################## " + resp.body)
       this.BID_RESPONSE_RECIEVED(JSON.parse(resp.body).updatedCurrentAmount)
       JSON.parse(resp.body).winner ? this.winningBidMade() : console.log("NOT A WINNER G")
     },

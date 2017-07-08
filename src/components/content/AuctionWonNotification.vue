@@ -1,36 +1,19 @@
 <template>
-	<div v-if="show" class="notification is-success winner-g-funk">
-	  <button class="delete" @click="closeWinNotification"></button>
-	  <strong>Holy Shit bro! You might have won!! Our servers are just calculating the final result!! Good news is, if youre seeing this message trhen you have at least won an account updgrade!!!! </strong><a>keep an eye on your email!!</a>
-	</div>
+	<div class="notification is-success winner-g-funk"><strong>Holy Shit bro! You might have won!! Our servers are calculating the final result!! Good news is, if you're seeing this message then you have at least won an account updgrade!!!!</strong></div>
 </template>
 
 
 <script>
 export default {
-  name: 'AuctionWonNotification',
-  data () {
-    return {
-      show: true
-    }
-  },
-  methods: {
-  	closeWinNotification() {
-  		this.show = false
-  	}
-  }
+  name: 'AuctionWonNotification'
 }
 
 </script>
 
 <style scoped>
-.notification {
-	
-}
-
 .winner-g-funk {
-	font-size: 28px;
-	height: 400px;
+  font-size: 28px;
+  height: 400px;
 	align-items: center;
 	justify-content: center;
 	display: flex;
