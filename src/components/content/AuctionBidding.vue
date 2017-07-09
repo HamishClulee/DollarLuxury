@@ -1,14 +1,16 @@
 <template>
   <div>
     <auction-won-notification v-if="thatBidWasAWinner"></auction-won-notification>
+    <no-balance-notification v-if="showOutOfBalanceNote"></no-balance-notification>
     <div class="bidding-container"></div>
-    <a class="button" v-if="socketConnected" @click="sendBid">Send Bid</a>
+    <a class="button is-primary is-fullwidth is-large" v-bind:class="{ 'is-loading' : socketWaiting }" v-if="socketConnected && getUserBalance" @click="sendBid">Send Bid</a>
+
   </div>
 </template>
 
 
 <script>
-import DollarSpinnerSmall from '@/components/util/DollarSpinnerSmall.vue'
+import NoBalanceNotification from '@/components/util/NoBalanceNotification.vue'
 import AuctionWonNotification from '@/components/content/AuctionWonNotification.vue'
 import SockJS from 'sockjs-client'
 import { mapMutations, mapGetters } from 'vuex'
@@ -17,7 +19,7 @@ import {Utils} from '@/store/Utils.js'
 export default {
   name: 'AuctionBidding',
   components: {
-  	'dollar-spinner-small': DollarSpinnerSmall,
+  	'no-balance-notification': NoBalanceNotification,
     'auction-won-notification': AuctionWonNotification
   },
   data () {
@@ -26,41 +28,56 @@ export default {
       ClientGuidArray: [],
       ServerGuidArray: [],
       thatBidWasAWinner: false,
+      socketWaiting: false,
+      showOutOfBalanceNote: false
     }
   },
   methods: {
     sendBid(){
-      var g = Utils.guid()
-      this.ClientGuidArray.push(g)
-      this.stompClient.send("/app/bid", {}, JSON.stringify({
-          'userEmail': this.getUserEmail,
-          'auctionId': this.$route.params.id, 
-          'id': g,
-          'timeStamp': new Date()
+      if(!this.socketWaiting && this.getUserBalance > 0){
+        var g = Utils.guid()
+        this.ClientGuidArray.push(g)
+        this.stompClient.send("/app/bid", {}, JSON.stringify({
+            'userEmail': this.getUserEmail,
+            'auctionId': this.$route.params.id, 
+            'id': g,
+            'timeStamp': new Date()
         }))
-      this.BID_MADE()
+        this.socketWaiting = true
+      } 
+
+      if(!this.getUserBalance){
+        this.showOutOfBalanceNote = true
+      }
     },
     messageResponse(resp){
       this.BID_RESPONSE_RECIEVED(JSON.parse(resp.body).updatedCurrentAmount)
-      JSON.parse(resp.body).winner ? this.winningBidMade() : console.log("NOT A WINNER G")
+      this.socketWaiting = false
+      JSON.parse(resp.body).winner ? this.winningBidMade() : null
     },
     winningBidMade() {
       this.thatBidWasAWinner = true
     },
     ...mapMutations([
-      'BID_MADE', 'BID_RESPONSE_RECIEVED'
+      'BID_RESPONSE_RECIEVED'
     ])
   },
   mounted () {
-    var socket = new SockJS('http://localhost:8080/startBidding')
-    this.stompClient = Stomp.over(socket)
-    this.stompClient.connect({}, () => {
-      this.socketConnected = true
-      this.stompClient.subscribe('/allBids/bidResponse', (response) => {this.messageResponse(response)})
-    })
+
+    if(this.getUserBalance > 0 ){
+      var socket = new SockJS('http://localhost:8080/startBidding')
+      this.stompClient = Stomp.over(socket)
+      this.stompClient.connect({}, () => {
+        this.socketConnected = true
+        this.stompClient.subscribe('/allBids/bidResponse', (response) => {this.messageResponse(response)})
+      })
+    } else {
+      this.showOutOfBalanceNote = true
+    }
+
   },
   computed: {
-    ...mapGetters(['getUserEmail', 'getCurrentAuctionAmount'])
+    ...mapGetters(['getUserEmail', 'getCurrentAuctionAmount', 'getUserBalance'])
   }
 }
 </script>

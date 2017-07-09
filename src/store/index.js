@@ -4,19 +4,11 @@ import {HTTP} from '@/axios';
 
 Vue.use(Vuex)
 
-const LOGIN = "LOGIN"
-const LOGIN_SUCCESS = "LOGIN_SUCCESS"
-const LOGOUT = "LOGOUT"
-const LOGIN_ERROR = "LOGIN_ERROR"
-const SET_HTTP_ERROR = "SET_HTTP_ERROR"
-
 const state = {
 	counter: 0,
 	pending: false,
 	auctions: [],
   userLoggedIn: false,
-  loginError: false,
-  loginErrorMessage: '',
 	user: {
 		email: null,
 		role: null,
@@ -49,50 +41,51 @@ const getters = {
   getCurrentAuctionAmount: state => { return state.currentAuction.currentAmount  },
   getAccountBalance: state => { return state.user.accountBalance.formatMoney(2) },
   getTotalBidsMade: state => { return state.user.totalBidsMade },
-  getUserEmail: state => { return state.user.email }
+  getUserEmail: state => { return state.user.email },
+  getUserBalance: state => { return state.user.accountBalance }
 }
 
 const mutations = {
-    [LOGIN] (state) {
-      state.pending = true;
+    LOGIN (state) {
+      state.loginPending = true;
     },
-    [LOGIN_SUCCESS] (state, user) {
-      state.pending = false
+    LOGIN_SUCCESS (state, user) {
+      state.loginPending = false
       state.user.role = user.role
       state.user.email = user.email
       state.user.accountBalance = user.accountBalance
       state.user.totalBidsMade = user.totalBidsMade
       state.userLoggedIn = true
     },
-    [LOGOUT] (state) {
+    LOGOUT (state) {
       state.user.role = null
       state.user.email = null
+      state.user.currentAmount = 0
+      state.user.accountBalance = 0
+      state.user.totalBidsMade = 0
       state.userLoggedIn = false
     },
-    [LOGIN_ERROR] (state, message) {
+    LOGIN_ERROR (state, message) {
       state.loginError = true
       state.loginErrorMessage = message
     },
-    [SET_HTTP_ERROR] (state){
+    SET_HTTP_ERROR (state){
       state.httpError = true
     },
     SET_CURRENT_AUCTION: (state, {auctionDetails}) => {
       state.currentAuction = auctionDetails
       state.currentAuctionReady = true
     },
-    BID_MADE: (state) => {
+    BID_RESPONSE_RECIEVED: (state, currentAmount) => {
+      state.currentAuction.currentAmount = currentAmount
       state.user.accountBalance--
       state.user.totalBidsMade++
-    },
-    BID_RESPONSE_RECIEVED: (state, currentAmount) => {
-      console.log("THE CURRENT AMOUNT FROM STORE MUTE: " + currentAmount)
-      state.currentAuction.currentAmount = currentAmount
     }
 }
 
 const actions = {
 	login({ commit }, creds) {
-     commit(LOGIN); // show spinner
+     commit("LOGIN"); // show spinner
      return HTTP.post(
             'login',
             {
@@ -107,20 +100,20 @@ const actions = {
               accountBalance: response.data.userAccountBalance,
               totalBidsMade: response.data.totalBidsMade
             }
-            commit(LOGIN_SUCCESS, user)
+            commit("LOGIN_SUCCESS", user)
         }).catch(function (e) {
-            commit(LOGIN_ERROR, e.response.data.message)
+            commit("LOGIN_ERROR", e.response.data.message)
         })
    },
    logout({ commit }) {
      localStorage.removeItem('id_token')
-     commit(LOGOUT)
+     commit("LOGOUT")
    },
    fetchCurrentAuction({ commit }, auctionId){
       HTTP.get('auctions/' + auctionId).then((response) => {
         commit('SET_CURRENT_AUCTION', { auctionDetails: response.data })
       }, (err) => {
-        commit(SET_HTTP_ERROR)
+        commit("SET_HTTP_ERROR")
       })
    }
 }
