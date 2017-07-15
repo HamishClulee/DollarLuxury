@@ -5,9 +5,8 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-// import VueStomp from 'vue-stomp'
+Vue.use(require('vue-chartist'))
 
-// Vue.use(VueStomp, 'http://localhost:8080/bid')
 
 Vue.config.productionTip = false
 
