@@ -1,7 +1,6 @@
 <template>
   <div>
     <section class="home-container">
-<!--       <h1 class="title is-1 width-title fancy2a">Welcome to Dollar Luxury!</h1> -->
       <div class="columns">
         <div class="column home-icon-box">
           <i class="fa fa-sign-in is-large one"></i>
@@ -42,12 +41,6 @@ export default {
 .width-title {
   border-bottom: 1px solid #ADADAD;
   padding: 20px;
-}
-
-.fancy2a {
-  border-width: 0 0 5px;
-  border-style: solid;
-  border-image: url(/static/border.png) 27 fill stretch;
 }
 
 .home-container {
