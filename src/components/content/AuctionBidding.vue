@@ -24,6 +24,7 @@ import SockJS from 'sockjs-client'
 import { mapMutations, mapGetters } from 'vuex'
 import {Utils} from '@/store/Utils.js'
 import {HTTP} from '@/axios'
+import moment from 'moment'
 
 export default {
   name: 'AuctionBidding',
@@ -69,7 +70,7 @@ export default {
         auctionId: this.getCurrentAuction.id,
         currentAmount: this.getCurrentAuctionAmount,
         id: '',
-        timeStamp: "2017-07-18T07:59:38.057Z",
+        timeStamp: moment(),
         userEmail: this.getUserEmail
       })
       JSON.parse(resp.body).winner ? this.winningBidMade() : null
