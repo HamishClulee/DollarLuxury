@@ -82,6 +82,7 @@
     "url-loader": "^0.5.8",
     "vue-chartjs": "^2.7.1",
     "vue-loader": "^11.3.4",
+    "vue-multiselect": "^2.0.2",
     "vue-stomp": "0.0.5",
     "vue-style-loader": "^2.0.5",
     "vue-template-compiler": "^2.4.1",

@@ -18,12 +18,6 @@
 	      <p class="title total-bids">{{ getTotalBidsMade }}</p>
 	    </div>
 	  </div>
-	  <div class="level-item has-text-centered">
-	    <div>
-	      <p class="heading">Bids Until Next Unlock</p>
-	      <p class="title bids-until">Not Implemented yet</p>
-	    </div>
-	  </div>
 	</nav>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-    <div></div>
+  <div></div>
 </template>
  
 <script> 
@@ -8,33 +8,23 @@ import moment from 'moment'
 
 export default {
   name: 'BiddingChart',
-  props: ['chartdata'],
+  props: ['chartdata', 'selectedTimeSpan'],
   beforeDestroy: function() {
     this.chartInstance.destroy()
   },
   data () {
     return {
-
+      showNoBidsNote: false
     }
   },
   mounted: function() {
-
-    this.formattedChartData = []
-
-    for (var i = 0; i < this.chartdata.length; i++) {
-      var obj = {
-        amount: this.chartdata[i].currentAmount,
-        date: moment(this.chartdata[i].timeStamp).format("DD/MM/YYYY HH:mm:ss")
-      }
-      this.formattedChartData.push(obj)
-    }
 
     var that = this
 
     this.chartInstance = c3.generate({
       bindto: that.$el,
       data: {
-        json: this.formattedChartData,
+        json: this.chartdata,
         x: "Date",
         xFormat: "%d/%m/%Y %H:%M:%S",
         type: 'line',
@@ -46,6 +36,11 @@ export default {
       axis: {
         x: {
           type: 'timeseries',
+          tick: {
+            fit: true,
+            count: 4,
+            format: function (d) { return d }
+          } 
         }
       },
       empty: {
@@ -57,9 +52,11 @@ export default {
   },
   methods: {
     chartChanges () {
+
+
       this.chartInstance.load({
         unload: true,
-        json: this.formattedChartData,
+        json: this.chartdata,
         keys: {
           x: 'date',
           value: ['amount']
@@ -69,10 +66,6 @@ export default {
   },
   watch: {
     chartdata: function() {
-      this.formattedChartData.push({
-        amount: this.formattedChartData[this.formattedChartData.length - 1].amount + 1,
-        date: moment().format("DD/MM/YYYY HH:mm:ss")
-      })
       this.chartChanges()
     }
   }
