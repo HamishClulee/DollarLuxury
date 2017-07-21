@@ -11,6 +11,7 @@
             v-model="selectedTimeSpan" :options="chartTimeOptions" 
             track-by="id" label="span"
             placeholder="Select a date range" :searchable="false"
+            @input="newRangeSelection"
           />
         <bidding-chart :chartdata="formattedChartData" :timespan="selectedTimeSpan"></bidding-chart>
       </div>
@@ -51,21 +52,15 @@ export default {
       // formattedFilteredChartData: [],
       formattedChartData: [],
       chartTimeOptions: [
-        {id: 0, span: "Last Day"},
-        {id: 1, span: "Last 3 Days"},
-        {id: 2, span: "Last Week"},
-        {id: 3, span: "Last Month"},
-        {id: 4, span: "All History"}
+        {id: 0, span: "Last Day", number: 1,  duration: "days"},
+        {id: 1, span: "Last 3 Days", number: 3,  duration: "days"},
+        {id: 2, span: "Last Week", number: 7,  duration: "days"},
+        {id: 3, span: "Last Month", number: 1,  duration: "months"}
       ],
       selectedTimeSpan: ''
     }
   },
   methods: {
-    // applyDateFilters() {
-    //   this.formattedFilteredChartData = this.formattedChartData.filter(function(val) {
-    //     return moment(val['date'], 'DD/MM/YYYY h:mm:ss').isBetween(moment().substract(), moment(), null, '[]');
-    //   })
-    // }
     formatChartData(setUp, subsequent) {
       if(setUp){
         var arr = []
@@ -85,10 +80,6 @@ export default {
           date: moment().format("DD/MM/YYYY h:mm:ss")
         })
       }
-
-      // if(this.selectedTimeSpan !== ''){
-      //   this.applyDateFilters()
-      // }
     },
     sendBid(){
       if(!this.socketWaiting && this.getUserBalance > 0){
@@ -116,12 +107,14 @@ export default {
     winningBidMade() {
       this.thatBidWasAWinner = true
     },
+    newRangeSelection(e) {
+      this.selectedTimeSpan = e
+    },
     ...mapMutations([
       'BID_RESPONSE_RECIEVED', 'SET_HTTP_ERROR'
     ])
   },
   mounted () {
-
     HTTP.get('restallbids/' + this.getCurrentAuction.id + "/" + this.getUserEmail )
       .then( response => this.formatChartData(response.data, null))
       .catch(error => this.SET_HTTP_ERROR(error))
