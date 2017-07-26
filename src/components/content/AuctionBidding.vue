@@ -1,20 +1,27 @@
 <template>
   <div>
+    <!-- if axios to get auction data call is pending -->
     <div v-if="setUpPending">
       <large-spinner/>
     </div>
     <div v-if="!setUpPending">
+      <!-- if auction won -->
       <auction-won-notification v-if="thatBidWasAWinner"></auction-won-notification>
+      <!-- if no user has no balance -->
       <no-balance-notification v-if="showOutOfBalanceNote"></no-balance-notification>
+      <!-- if no user has no balance -->
       <div class="bidding-container">
+          <!-- shows time range options for chart date range based on date range of bids already made -->
           <multiselect 
             v-model="selectedTimeSpan" :options="chartTimeOptions" 
             track-by="id" label="span"
             placeholder="Select a date range" :searchable="false"
             @input="newRangeSelection"
           />
+        <!-- bids chart -->
         <bidding-chart :chartdata="formattedChartData" :timespan="selectedTimeSpan"></bidding-chart>
       </div>
+      <!-- bid button -->
       <a class="button is-primary is-fullwidth is-large" v-bind:class="{ 'is-loading' : socketWaiting }" v-if="socketConnected && getUserBalance" @click="sendBid">Send Bid</a>
     </div>
   </div>
@@ -29,8 +36,8 @@ import LargeSpinner from '@/components/util/LargeSpinner.vue'
 import Multiselect from 'vue-multiselect'
 import SockJS from 'sockjs-client'
 import { mapMutations, mapGetters } from 'vuex'
-import {Utils} from '@/store/Utils.js'
-import {HTTP} from '@/axios'
+import { Utils } from '@/store/Utils.js'
+import { HTTP } from '@/axios'
 import moment from 'moment'
 
 export default {
@@ -44,23 +51,28 @@ export default {
   },
   data () {
     return {
+      // flag for set up spinner
       setUpPending: true,
+      // is websocket connection ready
       socketConnected: false,
+      // no prizes here...
       thatBidWasAWinner: false,
+      // for disbaling bidding while waiting for socket response
       socketWaiting: false,
+      // no money!!
       showOutOfBalanceNote: false,
-      // formattedFilteredChartData: [],
+      // for chart data, formatted from axios server response on set up and subsequent websocket bid responses
       formattedChartData: [],
-      chartTimeOptions: [
-        {id: 0, span: "Last Day", number: 1,  duration: "days"},
-        {id: 1, span: "Last 3 Days", number: 3,  duration: "days"},
-        {id: 2, span: "Last Week", number: 7,  duration: "days"},
-        {id: 3, span: "Last Month", number: 1,  duration: "months"}
-      ],
-      selectedTimeSpan: ''
+      // drop down options for multiselect
+      chartTimeOptions: [{id: 1, span: "Last Day", number: 1,  duration: "days"}],
+      // selected by multiselect
+      selectedTimeSpan: '',
+      // the date range in days between first bid and last bid for this user on this auction
+      duration: 0
     }
   },
   methods: {
+    // set up is axios response, subsequent is websocket responses 
     formatChartData(setUp, subsequent) {
       if(setUp){
         var arr = []
@@ -72,6 +84,25 @@ export default {
           arr.push(obj)
         })
         this.formattedChartData = arr
+
+        // get the date range of all bids to populate the multiselect box
+        // and ensure user cannot select a date range outside the bid range
+        var min = 0;
+        var max = 0;
+        var format = "DD/MM/YYYY"
+        if(this.formattedChartData.length > 0){
+          this.formattedChartData.forEach(function(d, i){
+            if(i === 0){
+              min = moment(d.date, format)
+              max = moment(d.date, format)
+            }
+            moment(d.date, format) < min ? min = moment(d.date, format) : null
+            moment(d.date, format) > max ? max = moment(d.date, format) : null
+          })
+        }
+
+        this.duration = moment(max - min).format("D")
+        this.buildDropDownOptions()
       }
 
       if(subsequent){
@@ -83,45 +114,66 @@ export default {
     },
     sendBid(){
       if(!this.socketWaiting && this.getUserBalance > 0){
+        // client side generated GUID for bid tracking on server
         var g = Utils.guid()
+        // send bid
         this.stompClient.send("/app/bid", {}, JSON.stringify({
             'userEmail': this.getUserEmail,
             'auctionId': this.$route.params.id, 
             'id': g,
             'timeStamp': new Date()
         }))
+        // disbale bidding pending socket response
         this.socketWaiting = true
-      } 
+      }
+      // you cant bid if youve got no money!
       if(!this.getUserBalance){
         this.showOutOfBalanceNote = true
       }
     },
     messageResponse(resp){
+      // ensure client and server state are kept as close as possible
       this.BID_RESPONSE_RECIEVED(JSON.parse(resp.body).updatedCurrentAmount)
+      // enable bidding
       this.socketWaiting = false
-
+      // format the response data for charting
       this.formatChartData(null, JSON.parse(resp.body))
-
+      // check for a winner
       JSON.parse(resp.body).winner ? this.winningBidMade() : null
     },
     winningBidMade() {
       this.thatBidWasAWinner = true
     },
     newRangeSelection(e) {
+      // nultiselect handler
       this.selectedTimeSpan = e
+    },
+    buildDropDownOptions() {
+      // builds options objects for the drop down based on the date range between first and last bid
+      this.chartTimeOptions = [{id: 1, span: "Last Day", number: 1,  duration: "days"}]
+      if(this.duration !== 0){
+        this.duration > 3 ? this.chartTimeOptions.push({id: 2, span: "Last 3 Days", number: 3,  duration: "days"}) : null
+        this.duration > 5 ? this.chartTimeOptions.push({id: 3, span: "Last Week", number: 7,  duration: "days"},) : null
+        this.duration > 14 ? this.chartTimeOptions.push({id: 4, span: "Last 2 Weeks", number: 2,  duration: "weeks"}) : null
+        this.duration > 28 ? this.chartTimeOptions.push({id: 5, span: "Last 4 Weeks", number: 4,  duration: "weeks"}) : null
+      }
     },
     ...mapMutations([
       'BID_RESPONSE_RECIEVED', 'SET_HTTP_ERROR'
     ])
   },
   mounted () {
+    // get all bids all ready made on this auction by this user
     HTTP.get('restallbids/' + this.getCurrentAuction.id + "/" + this.getUserEmail )
       .then( response => this.formatChartData(response.data, null))
       .catch(error => this.SET_HTTP_ERROR(error))
 
+    // cancel loading spinner - show component
     this.setUpPending = false
 
+    // check user balance
     if(this.getUserBalance > 0 ){
+      // open websocket connection
       var socket = new SockJS('http://localhost:8080/startBidding')
       this.stompClient = Stomp.over(socket)
       this.stompClient.connect({}, () => {

@@ -19,9 +19,6 @@ export default {
     }
   },
   mounted: function() {
-
-    this.timespan = {number: 100, duration: "years"}
-
     var that = this
     this.chartInstance = c3.generate({
       bindto: that.$el,
@@ -40,13 +37,15 @@ export default {
           type: 'timeseries',
           tick: {
             fit: true,
-            count: 4,
-            format: function (d) {
-              return d.getFullYear()
+            count: 8,
+            format: function (x) {
+
+              return moment(x).format("DD/MM")
+            
             }
           } 
         },
-        y :{
+        y:{
           max: this.getCurrentAuction.reserve
         }
       },
@@ -69,9 +68,17 @@ export default {
         }
       })
 
+      var timespanHack;
+
+      if(this.timespan == ''){
+        timespanHack = {id: 1, span: "Last Day", number: 3,  duration: "days"}
+      } else {
+        timespanHack = this.timespan
+      }
+
       this.chartInstance.axis.range({
         min: {
-          x: moment().subtract(that.timespan.number, that.timespan.duration),
+          x: moment().subtract(timespanHack.number, timespanHack.duration),
         },
         max: {
           x: moment()
