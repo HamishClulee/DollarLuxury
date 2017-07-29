@@ -6,7 +6,7 @@ import router from './router'
 import store from './store'
 import Popover from 'vue-js-popover'
 
-Vue.use(Popover)
+Vue.use(Popover) // https://github.com/euvl/vue-js-popover
 
 Vue.config.productionTip = false
 

@@ -46,9 +46,7 @@ export default {
     }
   },
   computed: {
-  	...mapGetters([
-      'isUserLoggedIn'
-    ])
+  	...mapGetters(['isUserLoggedIn'])
   },
   methods: {
 

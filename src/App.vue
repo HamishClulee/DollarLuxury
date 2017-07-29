@@ -29,9 +29,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'getHttpError'
-    ])
+    ...mapGetters(['getHttpError'])
   }
 }
 </script>

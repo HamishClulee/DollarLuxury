@@ -19,12 +19,6 @@ export default {
   name: 'Hero',
   components: {
     'tabs': Tabs
-  },
-  data () {
-    return {
-      pagetitle: '',
-      pagesubtitle: ''
-    }
   }
 }
 </script>

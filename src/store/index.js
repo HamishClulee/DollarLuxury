@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {HTTP} from '@/axios';
+import {HTTP} from '@/axios'
+import moment from 'moment'
 
 Vue.use(Vuex)
 
@@ -27,6 +28,12 @@ const state = {
     status: 0,
     dateCreated: 0
   },
+  messageSummaries: [
+    { date: moment().format("DD/MM"), subject: "You've won!", message: "Johns location is often unknown..."},
+    { date: moment().format("DD/MM"), subject: "You've won!", message: "Johns location is often unknown..."},
+    { date: moment().format("DD/MM"), subject: "You've won!", message: "Johns location is often unknown..."},
+    { date: moment().format("DD/MM"), subject: "You've won!", message: "Johns location is often unknown..."}
+  ],
   currentAuctionReady: false,
   httpError: false
 }
@@ -42,7 +49,8 @@ const getters = {
   getAccountBalance: state => { return state.user.accountBalance.formatMoney(2) },
   getTotalBidsMade: state => { return state.user.totalBidsMade },
   getUserEmail: state => { return state.user.email },
-  getUserBalance: state => { return state.user.accountBalance }
+  getUserBalance: state => { return state.user.accountBalance },
+  getUserMessageSummaries: state => { return state.messageSummaries }
 }
 
 const mutations = {
@@ -86,13 +94,8 @@ const mutations = {
 const actions = {
 	login({ commit }, creds) {
      commit("LOGIN"); // show spinner
-     return HTTP.post(
-            'login',
-            {
-                email: creds.email,
-                password: creds.password
-            }
-        ).then(response => {
+     return HTTP.post('login',{ email: creds.email, password: creds.password})
+        .then(response => {
             localStorage.setItem('id_token', response.data.token)
             var user = {
             	email: creds.email,
@@ -100,14 +103,10 @@ const actions = {
               accountBalance: response.data.userAccountBalance,
               totalBidsMade: response.data.totalBidsMade
             }
-            commit("LOGIN_SUCCESS", user)
-        }).catch(function (e) {
+            commit("LOGIN_SUCCESS", user)})
+        .catch(function (e) {
             commit("LOGIN_ERROR", e.response.data.message)
         })
-   },
-   logout({ commit }) {
-     localStorage.removeItem('id_token')
-     commit("LOGOUT")
    },
    fetchCurrentAuction({ commit }, auctionId){
       HTTP.get('auctions/' + auctionId).then((response) => {

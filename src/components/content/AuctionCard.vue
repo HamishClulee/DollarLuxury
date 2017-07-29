@@ -1,11 +1,13 @@
 <template>
   <section>
+  	<!-- non restricted view of all auctions that a user can bid upon -->
   	<router-link class="card" :to="'/auctions/' + auctionId" :auctionId="auctionId">
   		<div class="card-image">
 	    <figure class="image is-4by3">
 	      <img src="../../assets/macbook.jpg" alt="Image">
 	    </figure>
 	  </div>
+	  <!-- individual reusable card for displaying an -->
 	  <div class="card-content">
 	    <div class="media">
 	      <div class="media-content">

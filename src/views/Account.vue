@@ -9,7 +9,8 @@
 <script>
 import ShowAllUsers from '@/components/dev/ShowAllUsers.vue'
 import {HTTP} from '@/axios'
-// /auctionWinners /closedAuctions
+import { mapMutations } from 'vuex'
+
 export default {
   name: 'Home',
   components: {
@@ -22,12 +23,19 @@ export default {
     }
   },
   mounted () {
-    HTTP.get('auctionwinners').then(response => this.auctionWinners = response.data).catch(function (error) {
-        console.log(error);
-    })
-    HTTP.get('closedauctions').then(response => this.closedAuctions = response.data).catch(function (error) {
-        console.log(error);
-    })
+    // get all the auctions that have been won and their winners
+    HTTP.get('auctionwinners')
+      .then(response => this.auctionWinners = response.data)
+      .catch(error => this.SET_HTTP_ERROR())
+      
+    // get all the auctions 
+    HTTP.get('closedauctions')
+      .then(response => this.closedAuctions = response.data)
+      .catch(error => this.SET_HTTP_ERROR())
+
+  },
+  methods: {
+    ...mapMutations(['SET_HTTP_ERROR'])
   }
 }
 </script>

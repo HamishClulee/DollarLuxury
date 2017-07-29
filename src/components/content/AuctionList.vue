@@ -1,5 +1,6 @@
 <template>
-<!-- 'name', 'shortDescription', 'dateCreated', 'additionalInformationLink', 'reserveTotal', 'currentTotal' -->
+  <!-- 'name', 'shortDescription', 'dateCreated', 'additionalInformationLink', 'reserveTotal', 'currentTotal' -->
+  <!-- organises all the individual auction cards into a grid of all auctions -->
   <div class="container is-fullwidth">
     <div>
       <h1 class="has-text-centered title is-6 auction-list-heading">Current Auctions</h1>
@@ -38,7 +39,8 @@
 
 <script>
 import AuctionCard from '@/components/content/AuctionCard.vue'
-import {HTTP} from '@/axios';
+import {HTTP} from '@/axios'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'AuctionList',
@@ -48,26 +50,20 @@ export default {
       auctions: []
     }
   },
+  computed: {
+    ...mapGetters(['SET_HTTP_ERROR'])
+  },
   methods: {
     clearData () {
       this.auctions = []
     }
   },
   mounted () {
-      HTTP.get('auctions').then(response => this.auctions = response.data).catch(function (error) {
-        console.log(error);
-      })
+    HTTP.get('auctions')
+      .then(response => this.auctions = response.data)
+      .catch(error => this.SET_HTTP_ERROR())
   }
 }
-
-// for polling
-// mounted () {
-//     this.loadData()
-//     setInterval(function () {
-//       this.loadData()
-//     }.bind(this), 300000) 
-//   }
-
 </script>
 
 <style scoped>

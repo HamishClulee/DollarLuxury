@@ -1,11 +1,15 @@
 <template>
     <div class="columns pad">
-      <div class="column is-2"><auction-side-nav></auction-side-nav></div>
+      <div class="column is-2">
+        <!-- auction side panel, only shown if user logged in-->
+        <auction-side-nav></auction-side-nav>
+      </div>
       <div class="column is-10">
+        <!-- user can only access auction info if not logged -->
         <transition name="fade" mode="out-in">
           <auction-user-panel v-if="isUserLoggedIn"></auction-user-panel>
         </transition>
-          <auction-page></auction-page>
+        <auction-page></auction-page>
       </div>
     </div>
 		
@@ -18,7 +22,6 @@ import AuctionSideNav from '@/components/content/AuctionSideNav.vue'
 import AuctionUserPanel from '@/components/content/AuctionUserPanel.vue'
 import AuctionPage from '@/components/content/AuctionPage.vue'
 
-
 export default {
   name: 'Auction',
   components: {
@@ -26,18 +29,8 @@ export default {
     'auction-user-panel': AuctionUserPanel,
     'auction-page': AuctionPage
   },
-  data () {
-    return {
-
-    }
-  },
-  methods: {
-
-  },
   computed: {
-    ...mapGetters([
-      'isUserLoggedIn'
-    ])
+    ...mapGetters(['isUserLoggedIn'])
   }
 }
 
@@ -52,7 +45,7 @@ export default {
 .fade-enter-active, .fade-leave-active {
   transition: opacity 1s
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+.fade-enter, .fade-leave-to {
   opacity: 0
 }
 </style>

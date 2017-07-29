@@ -2,19 +2,25 @@
   <section>
     <div class="container">
       <transition name="fade" mode="out-in">
-	      <auction-info v-if="!biddingMode"><slot><a v-if="isUserLoggedIn"class="button is-large is-primary is-fullwidth" @click="startBidding">Start Bidding Now...</a><a v-if="!isUserLoggedIn"class="button is-large is-danger is-fullwidth" @click="startBidding">Login to start bidding</a></slot></auction-info>
+        <!-- This is the container component for an auction interactions, if user loggged in, they can start bidding -->
+	      <auction-info v-if="!biddingMode">
+          <slot>
+            <!-- biddingMode triggers a fetch of user-auction history for the chart 
+                  and the initiation of the auctions websockets subscription -->
+            <a v-if="isUserLoggedIn"class="button is-large is-primary is-fullwidth" @click="startBidding">Start Bidding Now...</a>
+            <a v-if="!isUserLoggedIn"class="button is-large is-danger is-fullwidth" @click="startBidding">Login to start bidding</a>
+          </slot>
+        </auction-info>
 	      <auction-bidding v-if="biddingMode && isUserLoggedIn"></auction-bidding>
       </transition>
     </div>
   </section>
 </template>
 
-
 <script>
 import {mapGetters} from 'vuex'
 import AuctionInfo from '@/components/content/AuctionInfo.vue'
 import AuctionBidding from '@/components/content/AuctionBidding.vue'
-
 
 export default {
   name: 'AuctionPage',
@@ -34,9 +40,7 @@ export default {
   	}
   },
   computed: {
-    ...mapGetters([
-      'isUserLoggedIn'
-    ])
+    ...mapGetters(['isUserLoggedIn'])
   }
 }
 
@@ -46,7 +50,7 @@ export default {
 .fade-enter-active, .fade-leave-active {
   transition: opacity 1s
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+.fade-enter, .fade-leave-to {
   opacity: 0
 }
 </style>
