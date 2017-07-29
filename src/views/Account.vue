@@ -22,10 +22,10 @@ export default {
     }
   },
   mounted () {
-    HTTP.get('auctionWinners').then(response => this.auctionWinners = response.data).catch(function (error) {
+    HTTP.get('auctionwinners').then(response => this.auctionWinners = response.data).catch(function (error) {
         console.log(error);
     })
-    HTTP.get('closedAuctions').then(response => this.closedAuctions = response.data).catch(function (error) {
+    HTTP.get('closedauctions').then(response => this.closedAuctions = response.data).catch(function (error) {
         console.log(error);
     })
   }

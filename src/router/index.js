@@ -6,6 +6,7 @@ import Account from '@/views/Account'
 import Admin from '@/views/Admin'
 import NotFound from '@/views/NotFound.vue'
 import Auction from '@/components/content/Auction.vue'
+import MailBox from '@/views/MailBox.vue'
 
 Vue.use(Router)
 
@@ -41,6 +42,11 @@ export default new Router({
       path: '/admin',
       name: 'Admin',
       component: Admin
+    },
+    {
+      path: '/mailbox',
+      name: 'MailBox',
+      component: MailBox
     }
   ],
   linkActiveClass: 'is-active'
