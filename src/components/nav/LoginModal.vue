@@ -39,9 +39,9 @@
 
 
 <script>
-import store from '@/store'
+import { CONNECT_SOCKET_EXPORT, DISCONNECT_SOCKET_EXPORT } from '@/store/index.js'
 import Router from '@/router'
-import { mapState } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'LoginModal',
@@ -52,25 +52,23 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['LOGIN']),
+    ...mapMutations(['LOGOUT']),
     login (){
-      this.$store.dispatch("login", {
-          email: this.email,
-          password: this.password
-        })
+      this.LOGIN({ email: this.email, password: this.password })
+      CONNECT_SOCKET_EXPORT()
       this.email = ''
       this.password = ''
+
     },
     logout() {
-      this.$store.dispatch("logout")
+      this.LOGOUT()
+      DISCONNECT_SOCKET_EXPORT()
       this.email = ''
       this.password = ''
     }
   },
-  computed: mapState([
-    'userLoggedIn',
-    'loginError',
-    'loginErrorMessage'
-  ])
+  computed: mapState(['userLoggedIn', 'loginError', 'loginErrorMessage'])
 }
 
 

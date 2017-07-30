@@ -4,13 +4,13 @@
     <div v-if="setUpPending">
       <large-spinner/>
     </div>
-    <div v-if="!setUpPending">
+    <div v-else>
       <!-- if auction won -->
-      <auction-won-notification v-if="thatBidWasAWinner"></auction-won-notification>
+      <auction-won-notification v-if="getCurrentAuction.isClosed"></auction-won-notification>
       <!-- if no user has no balance -->
-      <no-balance-notification v-if="showOutOfBalanceNote"></no-balance-notification>
+      <no-balance-notification v-if="!getUserBalance"></no-balance-notification>
       <!-- if no user has no balance -->
-      <div class="bidding-container">
+      <div class="bidding-container" v-if="!getCurrentAuction.isClosed">
           <!-- shows time range options for chart date range based on date range of bids already made -->
           <multiselect 
             v-model="selectedTimeSpan" :options="chartTimeOptions" 
@@ -19,26 +19,40 @@
             @input="newRangeSelection"
           />
         <!-- bids chart -->
-        <bidding-chart :chartdata="formattedChartData" :timespan="selectedTimeSpan"></bidding-chart>
+        <bidding-chart 
+          :chartdata="formattedChartData" 
+          :timespan="selectedTimeSpan">
+        </bidding-chart>
       </div>
       <!-- bid button -->
-      <a class="button is-primary is-fullwidth is-large" v-bind:class="{ 'is-loading' : socketWaiting }" v-if="socketConnected && getUserBalance" @click="sendBid">Send Bid</a>
+      <template v-if="getUserBalance">
+        <a 
+          class="button is-primary is-fullwidth is-large" 
+          v-bind:class="{ 'is-loading' : !getSocketEnabled }" 
+          @click="sendBid">
+          Send Bid
+        </a>
+      </template>
+      
     </div>
   </div>
 </template>
 
 
 <script>
+// SEND_BID is the export constant for the web sockets implementation
+import { SEND_BID } from '@/store/index.js'
+// dollar luxury components
 import BiddingChart from '@/components/content/BiddingChart.vue'
 import NoBalanceNotification from '@/components/util/NoBalanceNotification.vue'
 import AuctionWonNotification from '@/components/content/AuctionWonNotification.vue'
 import LargeSpinner from '@/components/util/LargeSpinner.vue'
+// vendor component
 import Multiselect from 'vue-multiselect'
-import SockJS from 'sockjs-client'
-import { mapMutations, mapGetters } from 'vuex'
-import { Utils } from '@/store/Utils.js'
+
 import { HTTP } from '@/axios'
 import moment from 'moment'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'AuctionBidding',
@@ -54,7 +68,7 @@ export default {
       // flag for set up spinner
       setUpPending: true,
       // is websocket connection ready
-      socketConnected: false,
+      socketConnected: true,
       // no prizes here...
       thatBidWasAWinner: false,
       // for disbaling bidding while waiting for socket response
@@ -113,36 +127,7 @@ export default {
       }
     },
     sendBid(){
-      if(!this.socketWaiting && this.getUserBalance > 0){
-        // client side generated GUID for bid tracking on server
-        var g = Utils.guid()
-        // send bid
-        this.stompClient.send("/app/bid", {}, JSON.stringify({
-            'userEmail': this.getUserEmail,
-            'auctionId': this.$route.params.id, 
-            'id': g,
-            'timeStamp': new Date()
-        }))
-        // disbale bidding pending socket response
-        this.socketWaiting = true
-      }
-      // you cant bid if youve got no money!
-      if(!this.getUserBalance){
-        this.showOutOfBalanceNote = true
-      }
-    },
-    messageResponse(resp){
-      // ensure client and server state are kept as close as possible
-      this.BID_RESPONSE_RECIEVED(JSON.parse(resp.body).updatedCurrentAmount)
-      // enable bidding
-      this.socketWaiting = false
-      // format the response data for charting
-      this.formatChartData(null, JSON.parse(resp.body))
-      // check for a winner
-      JSON.parse(resp.body).winner ? this.winningBidMade() : null
-    },
-    winningBidMade() {
-      this.thatBidWasAWinner = true
+      SEND_BID({ email: this.getUserEmail, auctionId: this.$route.params.id })
     },
     newRangeSelection(e) {
       // nultiselect handler
@@ -158,34 +143,19 @@ export default {
         this.duration > 28 ? this.chartTimeOptions.push({id: 5, span: "Last 4 Weeks", number: 4,  duration: "weeks"}) : null
       }
     },
-    ...mapMutations([
-      'BID_RESPONSE_RECIEVED', 'SET_HTTP_ERROR'
-    ])
+    ...mapMutations(['SET_HTTP_ERROR'])
   },
   mounted () {
     // get all bids all ready made on this auction by this user
     HTTP.get('restallbids/' + this.getCurrentAuction.id + "/" + this.getUserEmail )
       .then( response => this.formatChartData(response.data, null))
-      .catch(error => this.SET_HTTP_ERROR(error))
+      .catch( error => this.SET_HTTP_ERROR(error))
 
     // cancel loading spinner - show component
     this.setUpPending = false
-
-    // check user balance
-    if(this.getUserBalance > 0 ){
-      // open websocket connection
-      var socket = new SockJS('http://localhost:8080/startBidding')
-      this.stompClient = Stomp.over(socket)
-      this.stompClient.connect({}, () => {
-        this.socketConnected = true
-        this.stompClient.subscribe('/allBids/bidResponse', (response) => {this.messageResponse(response)})
-      })
-    } else {
-      this.showOutOfBalanceNote = true
-    }
   },
   computed: {
-    ...mapGetters(['getUserEmail', 'getCurrentAuctionAmount', 'getCurrentAuction', 'getUserBalance'])
+    ...mapGetters(['getUserEmail', 'getCurrentAuctionAmount', 'getCurrentAuction', 'getUserBalance', 'getSocketEnabled'])
   }
 }
 </script>

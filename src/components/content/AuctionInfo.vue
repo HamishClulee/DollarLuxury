@@ -47,7 +47,7 @@ export default {
     }
   },
   mounted () {
-	   this.fetchCurrentAuction(this.$route.params.id)
+	   this.FETCH_CURRENT_AUCTION(this.$route.params.id)
   },
   computed:{
     // formate the creation date as X days ago...
@@ -57,9 +57,7 @@ export default {
     ...mapGetters(['getCurrentAuction'])
   },
   methods: {
-    ...mapActions([
-      'fetchCurrentAuction'
-    ])
+    ...mapActions(['FETCH_CURRENT_AUCTION'])
   }
 }
 </script>

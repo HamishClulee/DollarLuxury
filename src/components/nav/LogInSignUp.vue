@@ -32,7 +32,7 @@
           <message-summary :date="mail.date" :subject="mail.subject" :message="mail.message"></message-summary> 
         </template>
         <!-- no messages exist -->
-        <template v-if="!getUserMessageSummaries">
+        <template v-if="!!getUserMessageSummaries">
           No Messages To Display...
         </template>
       </popover>
@@ -58,6 +58,7 @@
 import LoginModal from '@/components/nav/LoginModal.vue'
 import MessageSummary from '@/components/util/MessageSummary.vue'
 import { mapState, mapMutations, mapGetters } from 'vuex'
+import { DISCONNECT_SOCKET_EXPORT } from '@/store/index.js'
 import moment from 'moment'
 
 export default {
@@ -76,6 +77,7 @@ export default {
     ...mapMutations(['LOGOUT']),
     logout() {
       this.LOGOUT()
+      DISCONNECT_SOCKET_EXPORT()
     }
   },
   mounted () {
