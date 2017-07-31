@@ -10,7 +10,7 @@
 <script>
 export default {
   name: 'MessageSummary',
-  props: ['date', 'subject', 'message']
+  props: ['date', 'subject', 'message', 'read']
 }
 
 </script>

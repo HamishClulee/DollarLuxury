@@ -20,7 +20,7 @@
   <template v-else>
     <!-- MAIL -->
     <!-- USES VuePopOver PLUGIN TO DISPLAY LIST OF MESSAGES https://github.com/euvl/vue-js-popover -->
-    <a class="nav-item" v-popover:usermail.bottom>
+    <a class="nav-item" @click="removeUnReadNotification" v-popover:usermail.bottom>
       <span class="icon">
         <!-- CSS CLASS 'badge' ADDS THE RED CIRCLE FOR NEW NOTIFICATIONS -->
         <i class="fa fa-envelope icon-grey badge"></i>
@@ -29,12 +29,12 @@
       <popover name="usermail">
         <!-- loop message summaries -->
         <template v-for="mail in getUserMessageSummaries">
-          <message-summary :date="mail.date" :subject="mail.subject" :message="mail.message"></message-summary> 
+          <message-summary :date="mail.date" :subject="mail.subject" :message="mail.message" :read="mail.read"></message-summary> 
         </template>
         <!-- no messages exist -->
-        <template v-if="!!getUserMessageSummaries">
+<!--         <template v-if="getUserMessageSummaries.length === 0">
           No Messages To Display...
-        </template>
+        </template> -->
       </popover>
     </a>
     <!-- PROFILE / ACCOUNT PAGE -->
@@ -70,7 +70,7 @@ export default {
   data () {
     return {
       showLoginModal: false,
-      mailHoverShow: false
+      unreadMessages: false
     }
   },
   methods: {
@@ -78,6 +78,13 @@ export default {
     logout() {
       this.LOGOUT()
       DISCONNECT_SOCKET_EXPORT()
+    },
+    removeUnReadNotification () {
+      getUserMessageSummaries.forEach(function(item){
+        if(item.read === true){
+          this.unreadMessages = true
+        }
+      })
     }
   },
   mounted () {
@@ -85,7 +92,7 @@ export default {
   },
   computed: {
     ...mapState(['userLoggedIn']),
-    ...mapGetters(['getUserMessageSummaries', 'getUser', 'asdfjkh'])
+    ...mapGetters(['getUserMessageSummaries', 'getUser'])
   },
   watch: {
     userLoggedIn: function () {

@@ -74,6 +74,7 @@ const mutations = {
       state.user.accountBalance = 0
       state.user.totalBidsMade = 0
       state.userLoggedIn = false
+      state.messageSummaries = []
     },
     LOGIN_ERROR (state, message) {
       state.loginError = true
@@ -97,9 +98,30 @@ const mutations = {
       state.currentAuction.currentAmount = JSON.parse(message.body).updatedCurrentAmount
       state.user.accountBalance--
       state.user.totalBidsMade++
-      // check the if the user is a winner or out of funds - if not re-enable the socket
-      JSON.parse(message.body).winner ? state.currentAuction.isClosed = true : state.socket_enabled = true
-      JSON.parse(message.body).isOutOfFunds ? state.user.accountBalance = 0 : state.socket_enabled = true 
+
+      // check the if the user is a winner if so build the mail summary from the response - if not re-enable the socket
+      if(JSON.parse(message.body).winner) {
+          state.currentAuction.isClosed = true
+          // convenience var 
+          var summary = JSON.parse(message.body).mailSummary
+          // build message summary data for component
+          state.messageSummaries.push({
+            date: moment(summary.date).format("DD/MM"),
+            subject: summary.subject,
+            body: summary.bodySummary,
+            read: summary.read
+          })
+      } else {
+        state.socket_enabled = true
+      }
+      // check the if the user is out of funds if so build the mail summary for user of out funds - if not re-enable the socket
+      JSON.parse(message.body).isOutOfFunds ? 
+      (
+        state.user.accountBalance = 0,
+        state.messageSummaries.push({ date: moment().format("DD/MM"), subject: "You are out of funds", message: "Top them up by clicking here...", read: false })
+      ) 
+      : state.socket_enabled = true
+
     },
     NEW_USER_MAIL: (state, { message }) => {
       state.user_mail.push(message)
