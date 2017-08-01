@@ -128,6 +128,7 @@ export default {
     },
     sendBid(){
       SEND_BID({ email: this.getUserEmail, auctionId: this.$route.params.id })
+      this.formatChartData(null, { updatedCurrentAmount: this.getCurrentAuctionAmount })
     },
     newRangeSelection(e) {
       // nultiselect handler

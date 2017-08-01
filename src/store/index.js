@@ -52,7 +52,8 @@ const getters = {
   getUserEmail: state => { return state.user.email },
   getUserBalance: state => { return state.user.accountBalance },
   getUserMessageSummaries: state => { return state.messageSummaries },
-  getSocketEnabled: state => { return state.socket_enabled }
+  getSocketEnabled: state => { return state.socket_enabled },
+  getUserMail: state => { return state.user_mail }
 }
 
 const mutations = {
@@ -75,6 +76,7 @@ const mutations = {
       state.user.totalBidsMade = 0
       state.userLoggedIn = false
       state.messageSummaries = []
+      state.user_mail = []
     },
     LOGIN_ERROR (state, message) {
       state.loginError = true
@@ -108,14 +110,15 @@ const mutations = {
           state.messageSummaries.push({
             date: moment(summary.date).format("DD/MM"),
             subject: summary.subject,
-            body: summary.bodySummary,
+            message: summary.bodySummary,
             read: summary.read
           })
+
       } else {
         state.socket_enabled = true
       }
       // check the if the user is out of funds if so build the mail summary for user of out funds - if not re-enable the socket
-      JSON.parse(message.body).isOutOfFunds ? 
+      JSON.parse(message.body).outOfFunds ? 
       (
         state.user.accountBalance = 0,
         state.messageSummaries.push({ date: moment().format("DD/MM"), subject: "You are out of funds", message: "Top them up by clicking here...", read: false })
@@ -128,6 +131,20 @@ const mutations = {
     },
     SOCKET_CONNECTED: (state) => {
       state.socket_connected = true
+    },
+    USER_MAIL_RETRIEVED: (state, messages) => {
+      state.user_mail = messages
+
+      for(var i = 0; i < messages.length; i++){
+
+        state.messageSummaries.push({
+          date: moment(messages[i].mailSummary.date).format("DD/MM"),
+          subject: messages[i].mailSummary.subject,
+          message: messages[i].mailSummary.bodySummary.trunc(40),
+          read: messages[i].mailSummary.read
+        })
+
+      }
     }
 }
 
@@ -146,6 +163,11 @@ const actions = {
             accountBalance: response.data.userAccountBalance,
             totalBidsMade: response.data.totalBidsMade
           }
+
+          HTTP.get('usermail/' + user.email)
+            .then(response => commit("USER_MAIL_RETRIEVED", response.data))
+            .catch(error => commit("SET_HTTP_ERROR"))
+
           commit("LOGIN_SUCCESS", user)
         })
         .catch(function (e) {
