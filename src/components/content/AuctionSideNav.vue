@@ -5,24 +5,16 @@
 	    Account History
 	  </p>
 	  <ul class="menu-list">
-	    <li><a>Bid History</a></li>
-	    <li><a>Recent Auctions</a></li>
-	  </ul>
-	  <p class="menu-label">
-	    Admin
-	  </p>
-	  <ul class="menu-list">
-	    <li><a>Update Details</a></li>
-	    <li><a>Suggestions</a></li>
-	    <li><a>Get Help</a></li>
+	    <li><router-link as="a" to="/account">Bid History</router-link></li>
+	    <li><router-link as="a" to="/account">Recent Auctions</router-link></li>
 	  </ul>
 	  <p class="menu-label">
 	    Transactions
 	  </p>
 	  <ul class="menu-list">
-	    <li><a>Payments</a></li>
-	    <li><a>My Auctions</a></li>
-	    <li><a>Balance</a></li>
+	    <li><router-link as="a" to="/account">Payments</router-link></li>
+	    <li><router-link as="a" to="/account">My Auctions</router-link></li>
+	    <li><router-link as="a" to="/account">Balance</router-link></li>
 	  </ul>
 	</aside>
 	<aside class="menu" v-if="!isUserLoggedIn">

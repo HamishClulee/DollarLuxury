@@ -88,6 +88,11 @@ export default {
   methods: {
     // set up is axios response, subsequent is websocket responses 
     formatChartData(setUp, subsequent) {
+
+      if(setUp === []){
+        
+      }
+
       if(setUp){
         var arr = []
         setUp.forEach(function (d) {

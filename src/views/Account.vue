@@ -1,20 +1,35 @@
 <template>
   <section class="container account-container">
-    <div class="testing-list">Auction Winner Emails: {{ auctionWinners }}</div>
-    <div class="testing-list">Closed Auctions: {{ closedAuctions }}</div>
-    <show-all-users/>
+  <template v-if="isUserLoggedIn">
+    <auction-user-panel></auction-user-panel>
+    <add-balance-to-account></add-balance-to-account>
+    <recent-auctions></recent-auctions>
+    <bid-history></bid-history>
+  </template>
+  <template v-else>
+    <div>Login in to view details...</div>
+    <button class="button is-danger is-fullwidth">Log In</button>
+  </template>
+
   </section>
 </template>
 
 <script>
-import ShowAllUsers from '@/components/dev/ShowAllUsers.vue'
+import AuctionUserPanel from '@/components/content/AuctionUserPanel.vue'
+import AddBalanceToAccount from '@/components/content/AccountComponents/AddBalanceToAccount.vue'
+import RecentAuctions from '@/components/content/AccountComponents/RecentAuctions.vue'
+import BidHistory from '@/components/content/AccountComponents/BidHistory.vue'
+
 import {HTTP} from '@/axios'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
   components: {
-    'show-all-users': ShowAllUsers
+    'auction-user-panel': AuctionUserPanel,
+    'add-balance-to-account': AddBalanceToAccount,
+    'recent-auctions': RecentAuctions,
+    'bid-history': BidHistory
   },
   data () {
     return {
@@ -36,6 +51,9 @@ export default {
   },
   methods: {
     ...mapMutations(['SET_HTTP_ERROR'])
+  },
+  computed: {
+    ...mapGetters(['isUserLoggedIn'])
   }
 }
 </script>

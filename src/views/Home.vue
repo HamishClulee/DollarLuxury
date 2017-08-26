@@ -18,7 +18,7 @@
           <p>Head over to the auction page and start bidding, maybe pick up a big screen for a dollar?</p>
         </div>
       </div>
-<!--       <div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/QB4oIxcVmlc" frameborder="0" allowfullscreen></iframe></div> -->
+      <div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/QB4oIxcVmlc" frameborder="0" allowfullscreen></iframe></div>
     </section>
   </div>
 </template>

@@ -3,7 +3,7 @@
     <top-nav/>
     <hero/>
     <http-error v-if="getHttpError"></http-error>
-    <transition name="fade" mode="out-in"><router-view></router-view></transition>
+    <transition name="fade"><router-view></router-view></transition>
     <site-footer></site-footer>
   </div>
 </template>

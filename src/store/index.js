@@ -145,6 +145,9 @@ const mutations = {
         })
 
       }
+    },
+    ADD_FUNDS_TO_ACCOUNT: (state, num) => {
+      state.user.accountBalance = num
     }
 }
 
